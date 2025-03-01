@@ -3,147 +3,101 @@ local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 -- Settings
-local correctKey = "FISHWARE-KEY-8t54hndfilu94hng9p4n-57hfguedhufghn" -- Set your desired access key here
-local correctKey = "FISHWARE-OWNER-JFGJHNSJ81jktiHKFS-JFKLHJNSUIOFHFGJWAYjtgjldg" -- Owners Key PERMERANT
-local correctKey = "FISHWARE-OWNER-JFBNWSOIF734KHDGBG-JKFHNSIOGHAHOJTPOCHOIJHTHR" -- Owners Key PERMERANT
-local accessGranted = True -- Tracks if the player has access
+local validKeys = {} -- Holds all valid keys and their associated actions
 
--- Create Screen GUI
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "KeySystem"
-screenGui.Parent = playerGui
+-- 🟢 All 50 Keys Added Automatically
+local keysList = {
+    "FISHWARE-KEY-S9M6S7ZUZ85WI321CZCE",
+    "FISHWARE-KEY-PGP0XZSKT4L3M7L8XVTE",
+    "FISHWARE-KEY-7OYEJI9C7TB4N3YPPJDT",
+    "FISHWARE-KEY-LIJG3ZV42ZYYMY88QHKP",
+    "FISHWARE-KEY-46CDX26JCZ60CLPDE4BH",
+    "FISHWARE-KEY-C959ASULGUT77CQXMS2U",
+    "FISHWARE-KEY-9CC3MM2R1NK5G10HT0N0",
+    "FISHWARE-KEY-XCM623OV2AEC6V7PKC59",
+    "FISHWARE-KEY-WPMJG9DHVKML9YNP18DN",
+    "FISHWARE-KEY-6MMCBTCORY8AL5KIQHFM",
+    "FISHWARE-KEY-C7N1KOJJKF4EOIPA2BHG",
+    "FISHWARE-KEY-A6ZKWJTSA1JUFGRN0B6U",
+    "FISHWARE-KEY-1X8U4GSNN6SZMFQDN3YR",
+    "FISHWARE-KEY-QLIQRMTOSRK7EJF5QRM8",
+    "FISHWARE-KEY-AKT2V7DJS3LA888V3SDO",
+    "FISHWARE-KEY-KGCNZVGYABCGQ78CRKEF",
+    "FISHWARE-KEY-NATV58OBGNHSS4Q2JAJQ",
+    "FISHWARE-KEY-EUEZ925BO5EUAW5WE9BV",
+    "FISHWARE-KEY-29BZPCEUXSYZ1K6ZS1VL",
+    "FISHWARE-KEY-DVIVT5FOU4EUQW8QLIGM",
+    "FISHWARE-KEY-SMU6U76XT4BN9D6HO6PO",
+    "FISHWARE-KEY-HAOC1KLXNWXA6E3P9TP0",
+    "FISHWARE-KEY-WSB5ZTOTDPOQML6XLWBB",
+    "FISHWARE-KEY-IYYITQDS3KLJH57K2UYY",
+    "FISHWARE-KEY-FB05MYR1RQK43CBOQ7RA",
+    "FISHWARE-KEY-R29XSANLXRI01EFMHAYU",
+    "FISHWARE-KEY-M4YPYB9I0IS1VC6WV83D",
+    "FISHWARE-KEY-MT5CM2ZAY5AP2MFIPM3Z",
+    "FISHWARE-KEY-76F76WJGC43ZX9AVK4BR",
+    "FISHWARE-KEY-SW6OEIU6EU6VMIY3G2PE",
+    "FISHWARE-KEY-XHS05WK99HPOMJFUARWV",
+    "FISHWARE-KEY-3P8Y3LQZKC9D5986RKO3",
+    "FISHWARE-KEY-2T5VREAU9D5OCP97R9OX",
+    "FISHWARE-KEY-THEF0273P1W85Q6DMJPC",
+    "FISHWARE-KEY-HK3CYCWDWEP9UJDHHGPU",
+    "FISHWARE-KEY-GWSIXZEYAZ7U1CEV4HOM",
+    "FISHWARE-KEY-HVG9BUY104KWEXOYDWZJ",
+    "FISHWARE-KEY-JV9HP9RLBWCQFWDSWPZE",
+    "FISHWARE-KEY-GZX54RE20QIRYJX2G0Q2",
+    "FISHWARE-KEY-ZKW0KP1HPCB4R0YGFF11",
+    "FISHWARE-KEY-I4BDTR3XQBQBZ8VBMKX2",
+    "FISHWARE-KEY-QSB79S8JLJFDNZWHB51K",
+    "FISHWARE-KEY-GA1LFSZ8WM9L3UIQ671R",
+    "FISHWARE-KEY-QSK7GYN0OQBXQ2BJZ7K0",
+    "FISHWARE-KEY-8SA5NR0TMFN934Y30CKL",
+    "FISHWARE-KEY-KO3O7MP5A32ILHHYPQGQ",
+    "FISHWARE-KEY-4M7CSGFG3YLQBQYNQB3M",
+    "FISHWARE-KEY-SZJHWD0G708BRPYYNRKH",
+    "FISHWARE-KEY-HSTA4ZK3LTZM85JVAP4P",
+    "FISHWARE-KEY-EDRAQAC5UUO11YNCTHF4"
+}
 
--- Create Frame
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0.3, 0, 0.2, 0)
-frame.Position = UDim2.new(0.35, 0, 0.4, 0)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.Parent = screenGui
-
--- Create UI Corner (For Rounded Edges)
-local uiCorner = Instance.new("UICorner")
-uiCorner.CornerRadius = UDim.new(0.1, 0)
-uiCorner.Parent = frame
-
--- Create Text Label
-local textLabel = Instance.new("TextLabel")
-textLabel.Size = UDim2.new(1, 0, 0.3, 0)
-textLabel.Position = UDim2.new(0, 0, 0, 0)
-textLabel.BackgroundTransparency = 1
-textLabel.Text = "Enter Access Key"
-textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-textLabel.Font = Enum.Font.GothamBold
-textLabel.TextSize = 20
-textLabel.Parent = frame
-
--- Create TextBox for Key Input
-local textBox = Instance.new("TextBox")
-textBox.Size = UDim2.new(0.8, 0, 0.3, 0)
-textBox.Position = UDim2.new(0.1, 0, 0.4, 0)
-textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-textBox.Font = Enum.Font.Gotham
-textBox.PlaceholderText = "Enter Key Here"
-textBox.TextSize = 16
-textBox.Parent = frame
-
--- Apply Rounded Corners to TextBox
-local textBoxCorner = Instance.new("UICorner")
-textBoxCorner.CornerRadius = UDim.new(0.1, 0)
-textBoxCorner.Parent = textBox
-
--- Create Submit Button
-local submitButton = Instance.new("TextButton")
-submitButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-submitButton.Position = UDim2.new(0.1, 0, 0.75, 0)
-submitButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-submitButton.Text = "Submit"
-submitButton.Font = Enum.Font.GothamBold
-submitButton.TextSize = 18
-submitButton.Parent = frame
-
--- Rounded Corners for Button
-local buttonCorner = Instance.new("UICorner")
-buttonCorner.CornerRadius = UDim.new(0.1, 0)
-buttonCorner.Parent = submitButton
-
--- Function to execute when access is granted
-local function executeAdditionalCode()
-    print("[Key System]: Access Granted! Executing Additional Code...")
-
-loadstring(game:HttpGet("https://raw.githubusercontent.com/FISHWAREWIN/FISHHUBWAREISONTOPPPPPPPPPPPPPPPPPPPPPP/refs/heads/main/FISHWAREMENUEXPPPPPPPPPPPPPPPPPPPPPPPPPPP"))()
-
-    -- Example: Create a part in the workspace
-    local part = Instance.new("Part")
-    part.Size = Vector3.new(5, 1, 5)
-    part.Position = Vector3.new(0, 10, 0)
-    part.BrickColor = BrickColor.new("Bright green")
-    part.Anchored = true
-    part.Parent = workspace
-end
-
--- Function to show a fake ban screen
-local function fakeBanPlayer()
-    print("[Key System]: Wrong Key! Initiating Fake Ban...")
-
-    -- Create a full-screen frame to block the screen
-    local banScreen = Instance.new("Frame")
-    banScreen.Size = UDim2.new(1, 0, 1, 0)
-    banScreen.Position = UDim2.new(0, 0, 0, 0)
-    banScreen.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    banScreen.ZIndex = 10
-    banScreen.Parent = screenGui
-
-    -- Create a "Banned" message
-    local banLabel = Instance.new("TextLabel")
-    banLabel.Size = UDim2.new(1, 0, 0.3, 0)
-    banLabel.Position = UDim2.new(0, 0, 0.35, 0)
-    banLabel.BackgroundTransparency = 1
-    banLabel.Text = "WRONG PASS.\nReason: EXPIRED OR NOT CORRECT"
-    banLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-    banLabel.Font = Enum.Font.GothamBold
-    banLabel.TextSize = 40
-    banLabel.TextWrapped = true
-    banLabel.ZIndex = 11
-    banLabel.Parent = banScreen
-
-    -- Disable player controls (optional)
-    local camera = workspace.CurrentCamera
-    camera.CameraType = Enum.CameraType.Scriptable
-
-    -- Prevent further UI interaction
-    for _, gui in ipairs(playerGui:GetChildren()) do
-        if gui ~= screenGui then
-            gui.Enabled = false
-        end
+-- Add all keys to validKeys with the big code as the action
+for _, key in ipairs(keysList) do
+    validKeys[key] = function()
+        print("[Key System]: Valid Key Entered! Executing Big Code...")
+        -- Load your big code securely
+        loadstring(game:HttpGet("https://your-big-code-url.com/script.lua"))()
     end
 end
+
+-- Function to Kick Player for Invalid Key
+local function kickPlayer()
+    print("[Key System]: Invalid Key! Kicking Player...")
+    player:Kick("You were banned from this experience. Moderation message:\n\nRULE 1 - CHEATING (You may appeal if you believe this was false)")
+end
+
+-- Create UI for Key Input
+local screenGui = Instance.new("ScreenGui", playerGui)
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0.3, 0, 0.2, 0)
+frame.Position = UDim2.new(0.35, 0, 0.4, 0)
+
+local textBox = Instance.new("TextBox", frame)
+textBox.Size = UDim2.new(0.8, 0, 0.3, 0)
+textBox.Position = UDim2.new(0.1, 0, 0.4, 0)
+
+local submitButton = Instance.new("TextButton", frame)
+submitButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+submitButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+submitButton.Text = "Submit"
 
 -- Handle Button Click
 submitButton.MouseButton1Click:Connect(function()
     local enteredKey = textBox.Text
 
-    if enteredKey == correctKey then
-        accessGranted = true
-        textLabel.Text = "Access Granted!"
-        textLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-        
-        -- Smoothly hide the frame
-        frame:TweenPosition(UDim2.new(0.35, 0, -1, 0), "Out", "Quad", 0.5, true)
-        
-        wait(1)
+    if validKeys[enteredKey] then
+        print("[Key System]: Valid Key Entered!")
+        validKeys[enteredKey]() -- Execute the big code
         screenGui:Destroy()
-
-        -- Execute the additional code
-        executeAdditionalCode()
-
     else
-        -- Trigger the fake ban if the key is wrong
-        fakeBanPlayer()
+        kickPlayer()
     end
 end)
-
--- Optional: Smooth Entry Animation
-frame.Position = UDim2.new(0.35, 0, -0.5, 0)
-frame:TweenPosition(UDim2.new(0.35, 0, 0.4, 0), "Out", "Quad", 0.5, true)
