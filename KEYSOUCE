@@ -62,44 +62,62 @@ local keysList = {
 -- Add all keys to validKeys with the big code as the action
 for _, key in ipairs(keysList) do
     validKeys[key] = function()
-        print("[Key System]: Valid Key Entered! Executing Big Code...")
+        print("[FISHWARE HUB]: Valid Key Entered! Executing Big Code...")
         loadstring(game:HttpGet("https://raw.githubusercontent.com/FISHWAREWIN/FISHHUBWAREISONTOPPPPPPPPPPPPPPPPPPPPPP/refs/heads/main/FISHWAREMENUEXPPPPPPPPPPPPPPPPPPPPPPPPPPP"))()
     end
 end
 
 -- Function to Kick Player for Invalid Key
 local function kickPlayer()
-    print("[Key System]: Invalid Key! Kicking Player...")
-    player:Kick("Error Code: 600\n\nYou were banned from this experience. Moderation message:\n\nRULE 1 - CHEATING (You may appeal if you believe this was false)")
+    print("[FISHWARE HUB]: Invalid Key! Kicking Player...")
+    player:Kick("\n\nRULE 1 - CHEATING (You may appeal if you believe this was false)")
 end
 
 -- Create UI for Key Input
 local screenGui = Instance.new("ScreenGui", playerGui)
+
 local frame = Instance.new("Frame", screenGui)
-frame.Size = UDim2.new(0.3, 0, 0.2, 0)
-frame.Position = UDim2.new(0.35, 0, 0.4, 0)
+frame.Size = UDim2.new(0.3, 0, 0.25, 0)
+frame.Position = UDim2.new(0.35, 0, 0.35, 0)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+
+local uiCorner = Instance.new("UICorner", frame)
+uiCorner.CornerRadius = UDim.new(0.1, 0)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0.3, 0)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "FISHWARE HUB"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 30
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 local textBox = Instance.new("TextBox", frame)
-textBox.Size = UDim2.new(0.8, 0, 0.3, 0)
+textBox.Size = UDim2.new(0.8, 0, 0.25, 0)
 textBox.Position = UDim2.new(0.1, 0, 0.4, 0)
+textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+textBox.Font = Enum.Font.Gotham
+textBox.PlaceholderText = "Enter Access Key"
+textBox.TextSize = 16
+textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 local submitButton = Instance.new("TextButton", frame)
 submitButton.Size = UDim2.new(0.8, 0, 0.2, 0)
 submitButton.Position = UDim2.new(0.1, 0, 0.75, 0)
 submitButton.Text = "Submit"
+submitButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+submitButton.Font = Enum.Font.GothamBold
+submitButton.TextSize = 18
 
--- Handle Button Click
 submitButton.MouseButton1Click:Connect(function()
     local enteredKey = textBox.Text
-
     if validKeys[enteredKey] then
-        print("[Key System]: Valid Key Entered!")
+        print("[FISHWARE HUB]: Correct Key Entered!")
         validKeys[enteredKey]() -- Execute the big code
-        
-        -- Safely Remove the Old Key System UI
-        if screenGui then
-            screenGui:Destroy()
-        end
+        screenGui:Destroy() -- Remove UI
     else
         kickPlayer()
     end
