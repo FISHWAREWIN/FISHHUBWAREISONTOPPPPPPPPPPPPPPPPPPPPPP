@@ -1,0 +1,430 @@
+local userInputService = game:GetService("UserInputService")
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local isOpen = false  -- Track menu state
+local dragging = false
+local dragInput, dragStart, startPos
+
+-- Create the ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CustomMenu"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+-- Create the Main Frame (Rounded Corners)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.3, 0, 0.6, 0)  -- 30% width, 40% height
+frame.Position = UDim2.new(0.35, 0, -0.5, 0)  -- Start hidden
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)  -- Dark gray
+frame.BorderSizePixel = 0
+frame.Visible = false
+frame.Active = true  -- Needed for dragging
+frame.Parent = screenGui
+
+-- Apply UI Corner (Rounded Edges)
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0.1, 0)  -- Round corners
+uiCorner.Parent = frame
+
+-- Create Title Bar (Draggable)
+local titleBar = Instance.new("TextLabel")
+titleBar.Size = UDim2.new(1, 0, 0.15, 0)
+titleBar.Position = UDim2.new(0, 0, 0, 0)
+titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)  -- Darker gray
+titleBar.Text = "FISHWARE"
+titleBar.TextSize = 50
+titleBar.Font = Enum.Font.GothamBold
+titleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleBar.TextXAlignment = Enum.TextXAlignment.Left
+titleBar.Parent = frame
+
+-- Apply UI Corner to Title Bar
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0.1, 0)
+titleCorner.Parent = titleBar
+
+-- Function to create clean buttons
+local function createButton(text, position, callback)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0.8, 0, 0.2, 0)
+    button.Position = UDim2.new(0.1, 0, position, 0)
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Darker button
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Font = Enum.Font.Gotham
+    button.TextSize = 16
+    button.Text = text
+    button.Parent = frame
+
+    -- Rounded Corners for Buttons
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0.1, 0)
+    buttonCorner.Parent = button
+
+    -- Hover Effect
+    button.MouseEnter:Connect(function()
+        button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)  -- Lighten on hover
+    end)
+    button.MouseLeave:Connect(function()
+        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end)
+
+    -- Button Click Event
+    button.MouseButton1Click:Connect(callback)
+end
+
+-- Add buttons
+createButton("ESP", 0.2, function()
+wait("0.1")
+--[[ 
+    Advanced ESP Script (Fully Fixed)
+    - Box ESP
+    - Skeleton ESP
+    - Health Bar
+]]--
+
+-- Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+-- Settings
+local ESP_ENABLED = true
+local BOX_COLOR = Color3.fromRGB(0,250,33)-- Box Color
+local SKELETON_COLOR = Color3.fromRGB(255, 0, 0) -- Skeleton Color
+local HEALTH_BAR_COLOR = Color3.fromRGB(0, 255, 0) -- Health Bar Color
+
+-- Store ESP objects for each player
+local ESP_Objects = {}
+
+-- Function to Remove ESP for a Player
+local function RemoveESP(Player)
+    if ESP_Objects[Player] then
+        -- Remove ESP elements
+        ESP_Objects[Player].Box:Remove()
+        ESP_Objects[Player].HealthBar:Remove()
+        for _, bone in pairs(ESP_Objects[Player].Skeleton) do
+            bone.Line:Remove()
+        end
+
+        -- Disconnect the RenderStepped connection
+        if ESP_Objects[Player].Connection then
+            ESP_Objects[Player].Connection:Disconnect()
+        end
+
+        -- Remove from table
+        ESP_Objects[Player] = nil
+    end
+end
+
+-- Function to Create ESP for a Player
+local function CreateESP(Player)
+    if Player == LocalPlayer then return end
+
+    local function SetupCharacter(Character)
+        if not Character or not Character.Parent then return end
+
+        -- Ensure required parts exist
+        local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart", 5)
+        local Humanoid = Character:WaitForChild("Humanoid", 5)
+        if not HumanoidRootPart or not Humanoid then return end
+
+        -- Remove old ESP if it exists
+        RemoveESP(Player)
+
+        -- Create Box ESP
+        local ESP_Box = Drawing.new("Square")
+        ESP_Box.Color = BOX_COLOR
+        ESP_Box.Thickness = 2
+        ESP_Box.Transparency = 1
+        ESP_Box.Filled = false
+
+        -- Create Health Bar
+        local Health_Bar = Drawing.new("Line")
+        Health_Bar.Color = HEALTH_BAR_COLOR
+        Health_Bar.Thickness = 3
+        Health_Bar.Transparency = 1
+
+        -- Create Skeleton ESP
+        local Skeleton_Lines = {}
+        local Skeleton_Bones = {
+            {"Head", "UpperTorso"},
+            {"UpperTorso", "LowerTorso"},
+            {"UpperTorso", "LeftUpperArm"},
+            {"UpperTorso", "RightUpperArm"},
+            {"LowerTorso", "LeftUpperLeg"},
+            {"LowerTorso", "RightUpperLeg"},
+            {"LeftUpperArm", "LeftLowerArm"},
+            {"RightUpperArm", "RightLowerArm"},
+            {"LeftLowerArm", "LeftHand"},
+            {"RightLowerArm", "RightHand"},
+            {"LeftUpperLeg", "LeftLowerLeg"},
+            {"RightUpperLeg", "RightLowerLeg"},
+            {"LeftLowerLeg", "LeftFoot"},
+            {"RightLowerLeg", "RightFoot"},
+        }
+
+        for _, bone in pairs(Skeleton_Bones) do
+            local line = Drawing.new("Line")
+            line.Color = SKELETON_COLOR
+            line.Thickness = 2
+            line.Transparency = 1
+            table.insert(Skeleton_Lines, {Part1 = bone[1], Part2 = bone[2], Line = line})
+        end
+
+        -- Function to update ESP
+        local function UpdateESP()
+            if not Character or not Character.Parent then return end
+
+            local screenPosition, onScreen = Camera:WorldToViewportPoint(HumanoidRootPart.Position)
+
+            if onScreen and ESP_ENABLED then
+                -- Box ESP
+                local size = Vector2.new(2500 / screenPosition.Z, 4000 / screenPosition.Z)
+                local position = Vector2.new(screenPosition.X - size.X / 2, screenPosition.Y - size.Y / 2)
+
+                ESP_Box.Size = size
+                ESP_Box.Position = position
+                ESP_Box.Visible = true
+
+                -- Health Bar
+                local healthPercent = Humanoid.Health / Humanoid.MaxHealth
+                local healthHeight = size.Y * healthPercent
+                Health_Bar.From = Vector2.new(position.X - 5, position.Y + size.Y)
+                Health_Bar.To = Vector2.new(position.X - 5, position.Y + size.Y - healthHeight)
+                Health_Bar.Visible = true
+
+                -- Skeleton ESP
+                for _, bone in pairs(Skeleton_Lines) do
+                    local part1 = Character:FindFirstChild(bone.Part1)
+                    local part2 = Character:FindFirstChild(bone.Part2)
+
+                    if part1 and part2 then
+                        local pos1, onScreen1 = Camera:WorldToViewportPoint(part1.Position)
+                        local pos2, onScreen2 = Camera:WorldToViewportPoint(part2.Position)
+
+                        if onScreen1 and onScreen2 then
+                            bone.Line.From = Vector2.new(pos1.X, pos1.Y)
+                            bone.Line.To = Vector2.new(pos2.X, pos2.Y)
+                            bone.Line.Visible = true
+                        else
+                            bone.Line.Visible = false
+                        end
+                    end
+                end
+            else
+                ESP_Box.Visible = false
+                Health_Bar.Visible = false
+                for _, bone in pairs(Skeleton_Lines) do
+                    bone.Line.Visible = false
+                end
+            end
+        end
+
+        -- Connect to RenderStepped and store the connection
+        local connection = RunService.RenderStepped:Connect(UpdateESP)
+
+        -- Store ESP objects for cleanup
+        ESP_Objects[Player] = {
+            Box = ESP_Box,
+            HealthBar = Health_Bar,
+            Skeleton = Skeleton_Lines,
+            Connection = connection
+        }
+
+        -- Ensure ESP resets when character resets
+        Character.AncestryChanged:Connect(function(_, parent)
+            if not parent then
+                RemoveESP(Player)
+            end
+        end)
+    end
+
+    -- If player already has a character, create ESP immediately
+    if Player.Character then
+        SetupCharacter(Player.Character)
+    end
+
+    -- Set up ESP whenever the player spawns a new character
+    Player.CharacterAdded:Connect(SetupCharacter)
+end
+
+-- Function to Update ESP for All Players (Reapply when someone joins/resets)
+local function UpdateAllESP()
+    for _, Player in pairs(Players:GetPlayers()) do
+        CreateESP(Player)
+    end
+end
+
+-- Apply ESP to All Players
+UpdateAllESP()
+
+-- Handle New Players Joining
+Players.PlayerAdded:Connect(function(Player)
+    CreateESP(Player)
+    Player.CharacterAdded:Connect(function()
+        UpdateAllESP() -- Update ESP for all when someone respawns
+    end)
+end)
+
+-- Handle Players Leaving (Cleanup ESP)
+Players.PlayerRemoving:Connect(RemoveESP)
+
+print("[ESP]: Script Loaded. Features - Skeleton, Box, Health Bar.")
+
+end)
+
+createButton("AIMBOT", 0.5, function()
+wait("0.1")
+--[[
+    Smooth Auto-Lock Aimbot with Dynamic Vertical Prediction
+    - Toggles with "F"
+    - Locks onto the closest enemy to crosshair
+    - Dynamically adjusts prediction based on distance to target
+    - Aims higher as the distance increases (100, 200, 300 studs, etc.)
+]]--
+
+-- Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+-- Settings
+local AimbotEnabled = false -- Default is OFF
+local AimKey = Enum.KeyCode.F -- Toggle key
+local TargetPart = "Head" -- Aims at the enemy's head
+local AimSmoothness = 0.12 -- Lower = Faster Lock, Higher = More Legit
+local BasePredictionFactor = 0.15 -- Prediction factor at 100 studs
+local PredictionIncrement = 0.15 -- Additional prediction per 100 studs
+local VerticalAimIncrement = 3 -- Additional aim height per 100 studs
+local LockedTarget = nil -- Stores the locked enemy
+
+-- Toggle Aimbot Lock with "F"
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == AimKey then
+        AimbotEnabled = not AimbotEnabled
+        LockedTarget = nil
+        print("[Aimbot]: " .. (AimbotEnabled and "Enabled" or "Disabled"))
+    end
+end)
+
+-- Function to Get Closest Enemy to Crosshair
+function GetClosestToCrosshair()
+    local closestTarget = nil
+    local shortestDistance = math.huge
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            local character = player.Character
+            local head = character:FindFirstChild(TargetPart)
+            local humanoid = character:FindFirstChild("Humanoid")
+            local rootPart = character:FindFirstChild("HumanoidRootPart")
+
+            if head and humanoid and humanoid.Health > 0 and rootPart then
+                local screenPosition, onScreen = Camera:WorldToViewportPoint(head.Position)
+                local mousePosition = Vector2.new(Mouse.X, Mouse.Y)
+                local targetPosition = Vector2.new(screenPosition.X, screenPosition.Y)
+                local distance = (mousePosition - targetPosition).Magnitude
+
+                if onScreen and distance < shortestDistance then
+                    closestTarget = head
+                    shortestDistance = distance
+                end
+            end
+        end
+    end
+
+    return closestTarget
+end
+
+-- Smooth Aimbot Logic with Dynamic Prediction and Vertical Adjustment
+RunService.RenderStepped:Connect(function()
+    if AimbotEnabled and LockedTarget and LockedTarget.Parent then
+        local targetCharacter = LockedTarget.Parent
+        local targetRoot = targetCharacter:FindFirstChild("HumanoidRootPart")
+        local targetHumanoid = targetCharacter:FindFirstChild("Humanoid")
+
+        if targetRoot and targetHumanoid and targetHumanoid.Health > 0 then
+            local distanceToTarget = (Camera.CFrame.Position - LockedTarget.Position).Magnitude
+            
+            -- Calculate dynamic prediction factor
+            local predictionFactor = BasePredictionFactor + ((distanceToTarget // 100) * PredictionIncrement)
+            
+            -- Predict the target's future position
+            local targetVelocity = targetRoot.Velocity * predictionFactor
+            local predictedPosition = LockedTarget.Position + targetVelocity
+
+            -- Apply vertical aiming adjustment based on distance
+            local verticalOffset = (distanceToTarget // 100) * VerticalAimIncrement
+            predictedPosition = predictedPosition + Vector3.new(0, verticalOffset, 0)
+
+            -- Smoothly move camera towards predicted target position
+            local currentCameraCFrame = Camera.CFrame.Position
+            local direction = (predictedPosition - currentCameraCFrame).unit
+            local newCFrame = CFrame.lookAt(currentCameraCFrame, currentCameraCFrame + direction)
+
+            Camera.CFrame = Camera.CFrame:Lerp(newCFrame, AimSmoothness)
+        end
+    elseif AimbotEnabled and (not LockedTarget or not LockedTarget.Parent) then
+        -- If the target dies or is removed, try locking onto another target
+        LockedTarget = GetClosestToCrosshair()
+    end
+end)
+
+print("[Aimbot]: Loaded. Press 'F' to toggle Smooth Auto-Lock with Vertical Prediction.")
+
+end)
+
+-- Smooth Open & Close Animation
+local function toggleMenu()
+    if isOpen then
+        frame:TweenPosition(UDim2.new(0.35, 0, -0.5, 0), "Out", "Quad", 0.5, true)
+        wait(0.5)
+        frame.Visible = false
+    else
+        frame.Visible = true
+        frame.Position = UDim2.new(0.35, 0, -0.5, 0)  -- Start hidden
+        frame:TweenPosition(UDim2.new(0.35, 0, 0.3, 0), "Out", "Quad", 0.5, true)
+    end
+    isOpen = not isOpen
+end
+
+-- Toggle menu with Right Shift
+userInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.RightShift then
+        toggleMenu()
+    end
+end)
+
+-- Draggable Functionality (Title Bar Only)
+titleBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+titleBar.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+userInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+end)
