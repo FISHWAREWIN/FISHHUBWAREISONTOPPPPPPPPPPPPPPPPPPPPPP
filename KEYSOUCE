@@ -1,0 +1,149 @@
+-- Services
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Settings
+local correctKey = "FISHWARE-KEY-8t54hndfilu94hng9p4n-57hfguedhufghn" -- Set your desired access key here
+local correctKey = "FISHWARE-KEY-9ghndfflgdflhjboodas-hgfh48thffjhg8"
+local correctKey = "OWNERSMASTERKEYTOTHEBACKROOMS" -- Owners Key PERMERANT
+local accessGranted = false -- Tracks if the player has access
+
+-- Create Screen GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "KeySystem"
+screenGui.Parent = playerGui
+
+-- Create Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.3, 0, 0.2, 0)
+frame.Position = UDim2.new(0.35, 0, 0.4, 0)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Parent = screenGui
+
+-- Create UI Corner (For Rounded Edges)
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0.1, 0)
+uiCorner.Parent = frame
+
+-- Create Text Label
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 0.3, 0)
+textLabel.Position = UDim2.new(0, 0, 0, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = "Enter Access Key"
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.Font = Enum.Font.GothamBold
+textLabel.TextSize = 20
+textLabel.Parent = frame
+
+-- Create TextBox for Key Input
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(0.8, 0, 0.3, 0)
+textBox.Position = UDim2.new(0.1, 0, 0.4, 0)
+textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+textBox.Font = Enum.Font.Gotham
+textBox.PlaceholderText = "Enter Key Here"
+textBox.TextSize = 16
+textBox.Parent = frame
+
+-- Apply Rounded Corners to TextBox
+local textBoxCorner = Instance.new("UICorner")
+textBoxCorner.CornerRadius = UDim.new(0.1, 0)
+textBoxCorner.Parent = textBox
+
+-- Create Submit Button
+local submitButton = Instance.new("TextButton")
+submitButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+submitButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+submitButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+submitButton.Text = "Submit"
+submitButton.Font = Enum.Font.GothamBold
+submitButton.TextSize = 18
+submitButton.Parent = frame
+
+-- Rounded Corners for Button
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0.1, 0)
+buttonCorner.Parent = submitButton
+
+-- Function to execute when access is granted
+local function executeAdditionalCode()
+    print("[Key System]: Access Granted! Executing Additional Code...")
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FISHWAREWIN/FISHHUBWAREISONTOPPPPPPPPPPPPPPPPPPPPPP/refs/heads/main/FISHWAREMENUEXPPPPPPPPPPPPPPPPPPPPPPPPPPP"))()
+
+    -- Example: Create a part in the workspace
+    local part = Instance.new("Part")
+    part.Size = Vector3.new(5, 1, 5)
+    part.Position = Vector3.new(0, 10, 0)
+    part.BrickColor = BrickColor.new("Bright green")
+    part.Anchored = true
+    part.Parent = workspace
+end
+
+-- Function to show a fake ban screen
+local function fakeBanPlayer()
+    print("[Key System]: Wrong Key! Initiating Fake Ban...")
+
+    -- Create a full-screen frame to block the screen
+    local banScreen = Instance.new("Frame")
+    banScreen.Size = UDim2.new(1, 0, 1, 0)
+    banScreen.Position = UDim2.new(0, 0, 0, 0)
+    banScreen.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    banScreen.ZIndex = 10
+    banScreen.Parent = screenGui
+
+    -- Create a "Banned" message
+    local banLabel = Instance.new("TextLabel")
+    banLabel.Size = UDim2.new(1, 0, 0.3, 0)
+    banLabel.Position = UDim2.new(0, 0, 0.35, 0)
+    banLabel.BackgroundTransparency = 1
+    banLabel.Text = "WRONG PASS.\nReason: EXPIRED OR NOT CORRECT"
+    banLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+    banLabel.Font = Enum.Font.GothamBold
+    banLabel.TextSize = 40
+    banLabel.TextWrapped = true
+    banLabel.ZIndex = 11
+    banLabel.Parent = banScreen
+
+    -- Disable player controls (optional)
+    local camera = workspace.CurrentCamera
+    camera.CameraType = Enum.CameraType.Scriptable
+
+    -- Prevent further UI interaction
+    for _, gui in ipairs(playerGui:GetChildren()) do
+        if gui ~= screenGui then
+            gui.Enabled = false
+        end
+    end
+end
+
+-- Handle Button Click
+submitButton.MouseButton1Click:Connect(function()
+    local enteredKey = textBox.Text
+
+    if enteredKey == correctKey then
+        accessGranted = true
+        textLabel.Text = "Access Granted!"
+        textLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        
+        -- Smoothly hide the frame
+        frame:TweenPosition(UDim2.new(0.35, 0, -1, 0), "Out", "Quad", 0.5, true)
+        
+        wait(1)
+        screenGui:Destroy()
+
+        -- Execute the additional code
+        executeAdditionalCode()
+
+    else
+        -- Trigger the fake ban if the key is wrong
+        fakeBanPlayer()
+    end
+end)
+
+-- Optional: Smooth Entry Animation
+frame.Position = UDim2.new(0.35, 0, -0.5, 0)
+frame:TweenPosition(UDim2.new(0.35, 0, 0.4, 0), "Out", "Quad", 0.5, true)
