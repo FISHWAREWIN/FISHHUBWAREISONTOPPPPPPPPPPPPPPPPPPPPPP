@@ -309,7 +309,7 @@ local Mouse = LocalPlayer:GetMouse()
 local AimbotEnabled = false -- Default is OFF
 local AimKey = Enum.KeyCode.F -- Toggle key
 local TargetPart = "Head" -- Aims at the enemy's head
-local AimSmoothness = 0.02 -- Lower = Faster Lock, Higher = More Legit
+local AimSmoothness = 1 -- Lower = Faster Lock, Higher = More Legit
 local BasePredictionFactor = 0.15 -- Prediction factor at 100 studs
 local PredictionIncrement = 0.15 -- Additional prediction per 100 studs
 local VerticalAimIncrement = 3 -- Additional aim height per 100 studs
