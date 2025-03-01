@@ -63,14 +63,14 @@ local keysList = {
 for _, key in ipairs(keysList) do
     validKeys[key] = function()
         print("[Key System]: Valid Key Entered! Executing Big Code...")
-        loadstring(game:HttpGet("https://your-big-code-url.com/script.lua"))()
+        loadstring(game:HttpGet(""))()
     end
 end
 
 -- Function to Kick Player for Invalid Key
 local function kickPlayer()
     print("[Key System]: Invalid Key! Kicking Player...")
-    player:Kick("\n\nRULE 1 - CHEATING (You may appeal if you believe this was false)")
+    player:Kick("Error Code: 600\n\nYou were banned from this experience. Moderation message:\n\nRULE 1 - CHEATING (You may appeal if you believe this was false)")
 end
 
 -- Create UI for Key Input
@@ -95,7 +95,11 @@ submitButton.MouseButton1Click:Connect(function()
     if validKeys[enteredKey] then
         print("[Key System]: Valid Key Entered!")
         validKeys[enteredKey]() -- Execute the big code
-        screenGui:Destroy()
+        
+        -- Safely Remove the Old Key System UI
+        if screenGui then
+            screenGui:Destroy()
+        end
     else
         kickPlayer()
     end
