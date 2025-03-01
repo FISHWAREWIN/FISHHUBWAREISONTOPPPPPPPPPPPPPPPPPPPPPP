@@ -5,8 +5,13 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- Settings
 local correctKey = "FISHWARE-KEY-8t54hndfilu94hng9p4n-57hfguedhufghn" -- Set your desired access key here
 local correctKey = "FISHWARE-KEY-9ghndfflgdflhjboodas-hgfh48thffjhg8"
-local correctKey = "OWNERSMASTERKEYTOTHEBACKROOMS" -- Owners Key PERMERANT
-local accessGranted = false -- Tracks if the player has access
+local correctKey = "FISHWARE-KEY-UFVBX7HCFB8jfgh"uboo-JCBZihgh265BH2"
+local correctKey = "FISHWARE-KEY-JC66dgBHFHFVJWSHFHDJ-JFHGBESAJKFGG2"
+local correctKey = "FISHWARE-KEY-2hHFHngkdxfjWJjnfpig-JDFXUJjs2754mB"
+local correctKey = "FISHWARE-KEY-8fhBHVOHNAWuoihfglns-JFBNfj874hbnsf"
+local correctKey = "FISHWARE-OWNER-JFGJHNSJ81jktiHKFS-JFKLHJNSUIOFHFGJWAYjtgjldg" -- Owners Key PERMERANT
+local correctKey = "FISHWARE-OWNER-JFBNWSOIF734KHDGBG-JKFHNSIOGHAHOJTPOCHOIJHTHR" -- Owners Key PERMERANT
+local accessGranted = True -- Tracks if the player has access
 
 -- Create Screen GUI
 local screenGui = Instance.new("ScreenGui")
